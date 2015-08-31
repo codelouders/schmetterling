@@ -12,6 +12,7 @@ import akka.util.Timeout
 import com.codelouders.shmetterling.logger.{LoggingService, Logger}
 import com.codelouders.shmetterling.rest.auth.{NoAuthorisation, Authorization}
 import com.codelouders.shmetterling.websocket.WebSocketServer
+import com.typesafe.config.ConfigFactory
 import spray.can.Http
 import spray.can.server.UHttp
 
@@ -36,8 +37,11 @@ class Rest(actorSystem: ActorSystem, listOfResourceApiBuilders: List[BaseResourc
   def start(): Unit = {
 
     println("Starting up...")
+
     // start up logger actor system and logger actor
-    LoggingService.init(loggers)
+    val conf = ConfigFactory.load()
+    val logConf = conf.getConfig("logging")
+    LoggingService.init(loggers, Some(logConf))
 
     authorization.init()
 

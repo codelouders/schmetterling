@@ -10,6 +10,7 @@ package com.codelouders.shmetterling.logger
  */
 trait Logger {
   def debug(msg: String, tag: String)
+  def warn(msg: String, tag: String)
   def error(msg: String, tag: String, cause: Throwable, stack: Array[StackTraceElement] = null)
   def info(msg: String, tag: String)
 }

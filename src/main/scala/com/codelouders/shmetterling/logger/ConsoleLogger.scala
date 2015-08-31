@@ -20,6 +20,10 @@ class ConsoleLogger extends Logger {
     println(s"DEBUG | ${dateFormatter.format(new Date())} | $tag | $msg")
   }
 
+  override def warn(msg: String, tag: String): Unit = {
+    println(s"WARN | ${dateFormatter.format(new Date())} | $tag | $msg")
+  }
+
   override def error(msg: String, tag: String, cause: Throwable, stack: Array[StackTraceElement]): Unit = {
     println(s"ERROR | ${dateFormatter.format(new Date())} | $tag | MSG   | $msg")
     println(s"ERROR | ${dateFormatter.format(new Date())} | $tag | CAUSE | $cause")
