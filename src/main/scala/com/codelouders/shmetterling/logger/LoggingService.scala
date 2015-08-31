@@ -41,7 +41,7 @@ class LoggingService(loggers: List[Logger], loggerSettings: LoggerSettings) exte
       }
 
     case any: Any =>
-      println("Log type message unknown")
+      throw new Exception("Log type message unknown")
 
 
   }
