@@ -29,7 +29,7 @@ trait BaseResource extends HttpServiceBase {
    */
   implicit val PatchJsonNotationFormat = jsonFormat3(JsonNotation)
 
-  def authorisedResource: Boolean
+  def authorizedResource: Boolean
 
   /**
    * override if resource need to be initialized. For example db table creation etc
@@ -50,7 +50,7 @@ trait BaseResource extends HttpServiceBase {
   def authorization: Authorization
 
   final private def auth: Directive1[RestApiUser] = {
-    val authenticator = authorisedResource match {
+    val authenticator = authorizedResource match {
       case true => authorization.authenticator
       case false => NoAuthorisation.authenticator
     }

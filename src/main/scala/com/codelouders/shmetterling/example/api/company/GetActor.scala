@@ -7,12 +7,13 @@ package com.codelouders.shmetterling.example.api.company
 
 import akka.actor.{Props, Actor}
 import com.codelouders.shmetterling.logger.Logging
+import com.codelouders.shmetterling.rest.auth.RestApiUser
 import com.codelouders.shmetterling.websocket.PublishWebSocket
 import spray.routing.RequestContext
 import spray.httpx.SprayJsonSupport._
 import spray.json.DefaultJsonProtocol._
 
-case class GetMessage(ctx: RequestContext, userId: Option[Int])
+case class GetMessage(ctx: RequestContext, userId: Option[Int])(implicit logged: RestApiUser)
 
 /**
  * Actor handling person get message

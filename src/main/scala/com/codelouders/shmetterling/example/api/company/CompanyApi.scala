@@ -43,7 +43,7 @@ class CompanyApi(val actorContext: ActorContext, companyDao: CompanyDao, overrid
     super.init()
   }
 
-  override def authorisedResource = true
+  override def authorizedResource = true
 
   override def route(implicit userAuth: RestApiUser) = {
     pathPrefix(ResourceName) {

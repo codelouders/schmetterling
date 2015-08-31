@@ -8,10 +8,11 @@ package com.codelouders.shmetterling.example.api.company
 import akka.actor.{Props, Actor}
 import com.codelouders.shmetterling.logger.Logging
 import com.codelouders.shmetterling.rest.EntityNotFound
+import com.codelouders.shmetterling.rest.auth.RestApiUser
 import com.codelouders.shmetterling.websocket.{DeletePublishMessage, PublishWebSocket}
 import spray.routing.RequestContext
 
-case class DeleteMessage(ctx: RequestContext, companyId: Int)
+case class DeleteMessage(ctx: RequestContext, companyId: Int)(implicit logged: RestApiUser)
 
 /**
  * Actor handling delete message

@@ -8,14 +8,15 @@ package com.codelouders.shmetterling.example.api.company
 import akka.actor.{Props, Actor}
 import com.codelouders.shmetterling.entity.JsonNotation
 import com.codelouders.shmetterling.logger.Logging
+import com.codelouders.shmetterling.rest.auth.RestApiUser
 import com.codelouders.shmetterling.rest.{EntityNotFound, UpdateException}
 import com.codelouders.shmetterling.util.HttpRequestContextUtils
 import com.codelouders.shmetterling.websocket.{UpdatePublishMessage, PublishWebSocket}
 import spray.httpx.SprayJsonSupport._
 import spray.routing.RequestContext
 
-case class PutMessage(ctx: RequestContext, company: Company)
-case class PatchMessage(ctx: RequestContext, patch: List[JsonNotation], companyId: Int)
+case class PutMessage(ctx: RequestContext, company: Company)(implicit logged: RestApiUser)
+case class PatchMessage(ctx: RequestContext, patch: List[JsonNotation], companyId: Int)(implicit logged: RestApiUser)
 
 /**
  * Actor handling update messages

@@ -42,7 +42,7 @@ class OauthApi(val actorContext: ActorContext, sessionManager: ActorRef, authUse
     super.init()
   }
 
-  override def authorisedResource = false
+  override def authorizedResource = false
 
   override def route(implicit restApiUser: RestApiUser) =
     pathPrefix(ResourceName) {
