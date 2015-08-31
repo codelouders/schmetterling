@@ -11,14 +11,14 @@ import com.codelouders.shmetterling.example.api.company.CompanyApiBuilder
 import com.codelouders.shmetterling.example.api.person.PersonApiBuilder
 import com.codelouders.shmetterling.example.auth.oauth2.{OauthAuthorization, OauthConfig}
 import com.codelouders.shmetterling.example.auth.oauth2.provider.MysqlAuthorizationProvider
-import com.codelouders.shmetterling.logger.ConsoleLogger
+import com.codelouders.shmetterling.logger.{FileLogger, ConsoleLogger}
 import com.codelouders.shmetterling.rest.Rest
 
 
 // Without authorization
 object RestExampleApp extends App {
   new Rest(ActorSystem("on-spray-can"), List(new PersonApiBuilder,
-    new CompanyApiBuilder), List(new ConsoleLogger)).start()
+    new CompanyApiBuilder), List(new ConsoleLogger, new FileLogger("D:\\rest-container.log"))).start()
 }
 
 
