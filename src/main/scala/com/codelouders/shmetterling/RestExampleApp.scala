@@ -21,8 +21,7 @@ object RestExampleApp extends App {
     new CompanyApiBuilder), List(new ConsoleLogger, new FileLogger("D:\\rest-container.log"))).start()
 }
 
-
-// With oauth 2 authorization
+// With oauth2 authorization
 object RestWithOauthExampleApp extends App {
   val oauthConfig = new OauthConfig(new MysqlAuthorizationProvider())
 

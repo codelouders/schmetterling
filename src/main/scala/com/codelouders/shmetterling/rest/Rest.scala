@@ -57,11 +57,17 @@ class Rest(actorSystem: ActorSystem, listOfResourceApiBuilders: List[BaseResourc
     val server = system.actorOf(WebSocketServer.props(authorization), WebSocketServer.Name)
 
 
-    println("Websocket is starting...")
-    implicit val timeout = Timeout(5.seconds)
-    // start a new HTTP server on port 8080 with our service actor as the handler
-    IO(UHttp) ! Http.Bind(server, "localhost", port = 8082)
+    val runWebSocketServer = conf.getBoolean("websocket.run")
 
+    runWebSocketServer match {
+      case true =>
+        println("Websocket is starting...")
+        implicit val timeout = Timeout(5.seconds)
+        // start a new HTTP server on port 8080 with our service actor as the handler
+        IO(UHttp) ! Http.Bind(server, "localhost", port = 8082)
+      case false =>
+        println("Websocket is turn off...")
+    }
 
     println("Rest is starting...")
     // SPRAY WORKAROUND: Must me killed before starting rest server because of actor naming collision
