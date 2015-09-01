@@ -7,6 +7,7 @@
 package com.codelouders.shmetterling.rest
 
 import akka.actor._
+import com.codelouders.shmetterling.events.SchmetteringEventBus
 import com.codelouders.shmetterling.logger.Logging
 import com.codelouders.shmetterling.rest.auth.Authorization
 import spray.routing._
@@ -16,13 +17,13 @@ import spray.routing.authentication._
 /**
  * Main Api service class
  */
-class ApiService(availableApis: List[BaseResourceBuilder], authorization: Authorization)
+class ApiService(availableApis: List[BaseResourceBuilder], authorization: Authorization, eventBus: SchmetteringEventBus)
   extends Actor with HttpServiceBase with Logging {
 
-  val apis = availableApis.map{_.create(context, authorization)}
+  val apis = availableApis.map{_.create(context, authorization, eventBus)}
   apis.foreach(_.init())
 
-  val routing: Route = apis.foldLeft[Route](null)((a,b) => if (a == null) b.apiRoute() else {a ~ b.apiRoute()})
+  lazy val routing: Route = apis.foldLeft[Route](null)((a,b) => if (a == null) b.apiRoute() else {a ~ b.apiRoute()})
 
   override val logTag: String = getClass.getName
 
@@ -33,7 +34,7 @@ class ApiService(availableApis: List[BaseResourceBuilder], authorization: Author
 object ApiService {
   val ActorName = "api-root"
 
-  def props(availableApis: List[BaseResourceBuilder],  authorization: Authorization) = {
-    Props(classOf[ApiService], availableApis, authorization: Authorization)
+  def props(availableApis: List[BaseResourceBuilder],  authorization: Authorization, eventBus: SchmetteringEventBus) = {
+    Props(classOf[ApiService], availableApis, authorization, eventBus)
   }
 }

@@ -6,9 +6,9 @@
 package com.codelouders.shmetterling.example.api.company
 
 import akka.actor.{Props, Actor}
+import com.codelouders.shmetterling.events.{SchmetteringEventBus, EntityChangedNotifications}
 import com.codelouders.shmetterling.logger.Logging
 import com.codelouders.shmetterling.rest.auth.RestApiUser
-import com.codelouders.shmetterling.websocket.PublishWebSocket
 import spray.routing.RequestContext
 import spray.httpx.SprayJsonSupport._
 import spray.json.DefaultJsonProtocol._
@@ -18,7 +18,8 @@ case class GetMessage(ctx: RequestContext, userId: Option[Int])(implicit logged:
 /**
  * Actor handling person get message
  */
-class GetActor(companyDao: CompanyDao) extends Actor with Logging with PublishWebSocket {
+class GetActor(companyDao: CompanyDao, override val eventBus: SchmetteringEventBus) extends Actor
+with Logging with EntityChangedNotifications {
 
   override val logTag: String = getClass.getName
 
@@ -40,5 +41,5 @@ class GetActor(companyDao: CompanyDao) extends Actor with Logging with PublishWe
 
 object GetActor {
   val Name = s"${ResourceName}GetRouter"
-  def props(companyDao: CompanyDao) = Props(classOf[GetActor], companyDao)
+  def props(companyDao: CompanyDao, eventBus: SchmetteringEventBus) = Props(classOf[GetActor], companyDao, eventBus)
 }

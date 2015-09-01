@@ -18,7 +18,7 @@ import com.codelouders.shmetterling.rest.Rest
 // Without authorization
 object RestExampleApp extends App {
   new Rest(ActorSystem("on-spray-can"), List(new PersonApiBuilder,
-    new CompanyApiBuilder), List(new ConsoleLogger, new FileLogger("D:\\rest-container.log"))).start()
+    new CompanyApiBuilder), List(new ConsoleLogger, new FileLogger("c:\\temp\\rest-container.log"))).start()
 }
 
 // With oauth2 authorization

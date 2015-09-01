@@ -9,6 +9,7 @@ package com.codelouders.shmetterling.rest
 import akka.actor.{ActorSystem, PoisonPill}
 import akka.io.IO
 import akka.util.Timeout
+import com.codelouders.shmetterling.events.SchmetteringEventBus
 import com.codelouders.shmetterling.logger.{LoggingService, Logger}
 import com.codelouders.shmetterling.rest.auth.{NoAuthorisation, Authorization}
 import com.codelouders.shmetterling.websocket.WebSocketServer
@@ -52,9 +53,9 @@ class Rest(actorSystem: ActorSystem, listOfResourceApiBuilders: List[BaseResourc
       case None => listOfResourceApiBuilders
     }
 
-
-    val service = system.actorOf(ApiService.props(apis, authorization), ApiService.ActorName)
-    val server = system.actorOf(WebSocketServer.props(authorization), WebSocketServer.Name)
+    val eventBus =  new SchmetteringEventBus
+    val service = system.actorOf(ApiService.props(apis, authorization, eventBus), ApiService.ActorName)
+    val server = system.actorOf(WebSocketServer.props(authorization, eventBus), WebSocketServer.Name)
 
 
     val runWebSocketServer = conf.getBoolean("websocket.run")

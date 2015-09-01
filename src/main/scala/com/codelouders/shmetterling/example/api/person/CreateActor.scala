@@ -7,25 +7,27 @@ package com.codelouders.shmetterling.example.api.person
 
 import akka.actor.{Props, Actor}
 import com.codelouders.shmetterling.entity.EntityHelper
+import com.codelouders.shmetterling.events.{SchmetteringEventBus, CreateEntityNotification, EntityChangedNotifications}
 import com.codelouders.shmetterling.logger.Logging
+import com.codelouders.shmetterling.rest.auth.RestApiUser
 import com.codelouders.shmetterling.util.HttpRequestContextUtils
-import com.codelouders.shmetterling.websocket.{CreateEntityNotification, PublishWebSocket}
 import spray.routing.RequestContext
 import spray.httpx.SprayJsonSupport._
 
-case class CreateMessage(ctx: RequestContext, person: Person)
+case class CreateMessage(ctx: RequestContext, person: Person)(implicit val loggedUser: RestApiUser)
 
 /**
  * Actor handling person create message
  */
-class CreateActor(personDao: PersonDao) extends Actor with Logging with PublishWebSocket with HttpRequestContextUtils with EntityHelper {
+class CreateActor(personDao: PersonDao, override val eventBus: SchmetteringEventBus) extends Actor with Logging
+with EntityChangedNotifications with HttpRequestContextUtils with EntityHelper {
 
   override val logTag = getClass.getName
 
   override def receive: Receive = {
 
-    case CreateMessage(ctx, person) =>
-
+    case msg@CreateMessage(ctx, person) =>
+      implicit val user = msg.loggedUser
       try {
         val addedPerson = person.copy(id = Some(personDao.create(person)))
         ctx.complete(addedPerson)
@@ -41,5 +43,5 @@ class CreateActor(personDao: PersonDao) extends Actor with Logging with PublishW
 
 object CreateActor {
   val Name = s"${ResourceName}CreateRouter"
-  def props(personDao: PersonDao) = Props(classOf[CreateActor], personDao)
+  def props(personDao: PersonDao, eventBus: SchmetteringEventBus) = Props(classOf[CreateActor], personDao, eventBus)
 }

@@ -6,24 +6,27 @@
 package com.codelouders.shmetterling.example.api.person
 
 import akka.actor.{Props, Actor}
+import com.codelouders.shmetterling.events.{DeleteEntityNotification, EntityChangedNotifications, SchmetteringEventBus}
 import com.codelouders.shmetterling.logger.Logging
 import com.codelouders.shmetterling.rest.EntityNotFound
-import com.codelouders.shmetterling.websocket.{DeleteEntityNotification, PublishWebSocket}
+import com.codelouders.shmetterling.rest.auth.RestApiUser
 import spray.routing.RequestContext
 import spray.httpx.SprayJsonSupport._
 
-case class DeleteMessage(ctx: RequestContext, personId: Int)
+case class DeleteMessage(ctx: RequestContext, personId: Int)(implicit val loggedUser: RestApiUser)
 
 case class DeleteResult(deleted: Boolean)
 
 /**
  * Actor handling delete message
  */
-class DeleteActor(personDao: PersonDao) extends Actor with PublishWebSocket with Logging {
+class DeleteActor(personDao: PersonDao, override val eventBus: SchmetteringEventBus) extends Actor
+with EntityChangedNotifications with Logging {
 
   override def receive: Receive = {
-    case DeleteMessage(ctx, personId) =>
+    case msg@DeleteMessage(ctx, personId) =>
       L.debug(s"deleting person $personId")
+      implicit val user = msg.loggedUser
       val count = personDao.deleteById(personId)
       if (count == 1){
         ctx.complete("")
@@ -39,5 +42,5 @@ class DeleteActor(personDao: PersonDao) extends Actor with PublishWebSocket with
 
 object DeleteActor {
   val Name = s"${ResourceName}DeleteRouter"
-  def props(personDao: PersonDao) = Props(classOf[DeleteActor], personDao)
+  def props(personDao: PersonDao, eventBus: SchmetteringEventBus) = Props(classOf[DeleteActor], personDao, eventBus)
 }

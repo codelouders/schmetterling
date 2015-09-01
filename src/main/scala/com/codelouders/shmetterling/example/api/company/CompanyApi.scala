@@ -8,6 +8,7 @@ package com.codelouders.shmetterling.example.api.company
 import akka.actor.ActorContext
 import akka.routing.RoundRobinPool
 import com.codelouders.shmetterling.entity.JsonNotation
+import com.codelouders.shmetterling.events.SchmetteringEventBus
 import com.codelouders.shmetterling.logger.Logging
 import com.codelouders.shmetterling.rest.{BaseResourceBuilder, BaseResource}
 import com.codelouders.shmetterling.rest.auth.{Authorization, RestApiUser}
@@ -23,7 +24,8 @@ import spray.json.DefaultJsonProtocol._
  * trait DatabaseAccess - for db access
  *
  */
-class CompanyApi(val actorContext: ActorContext, companyDao: CompanyDao, override val authorization: Authorization)
+class CompanyApi(val actorContext: ActorContext, companyDao: CompanyDao, override val authorization: Authorization,
+                 eventBus: SchmetteringEventBus)
   extends BaseResource with Logging {
 
 
@@ -31,10 +33,10 @@ class CompanyApi(val actorContext: ActorContext, companyDao: CompanyDao, overrid
    * Handler val names must be unique in the system - all
    */
 
-  private val companyCreateHandler = actorContext.actorOf(RoundRobinPool(2).props(CreateActor.props(companyDao)), CreateActor.Name)
-  private val companyPutHandler = actorContext.actorOf(RoundRobinPool(5).props(UpdateActor.props(companyDao)), UpdateActor.Name)
-  private val companyGetHandler = actorContext.actorOf(RoundRobinPool(20).props(GetActor.props(companyDao)), GetActor.Name)
-  private val companyDeleteHandler = actorContext.actorOf(RoundRobinPool(2).props(DeleteActor.props(companyDao)), DeleteActor.Name)
+  private val companyCreateHandler = actorContext.actorOf(RoundRobinPool(2).props(CreateActor.props(companyDao, eventBus)), CreateActor.Name)
+  private val companyPutHandler = actorContext.actorOf(RoundRobinPool(5).props(UpdateActor.props(companyDao, eventBus)), UpdateActor.Name)
+  private val companyGetHandler = actorContext.actorOf(RoundRobinPool(20).props(GetActor.props(companyDao, eventBus)), GetActor.Name)
+  private val companyDeleteHandler = actorContext.actorOf(RoundRobinPool(2).props(DeleteActor.props(companyDao, eventBus)), DeleteActor.Name)
 
   override val logTag: String = getClass.getName
 
@@ -83,7 +85,7 @@ class CompanyApi(val actorContext: ActorContext, companyDao: CompanyDao, overrid
 }
 
 class CompanyApiBuilder extends BaseResourceBuilder {
-  override def create(actorContext: ActorContext, authorization: Authorization): BaseResource = {
-    new CompanyApi(actorContext, new CompanyDao, authorization)
+  override def create(actorContext: ActorContext, authorization: Authorization, eventBus: SchmetteringEventBus): BaseResource = {
+    new CompanyApi(actorContext, new CompanyDao, authorization, eventBus)
   }
 }

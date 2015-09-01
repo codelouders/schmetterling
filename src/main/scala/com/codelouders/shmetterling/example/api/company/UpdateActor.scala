@@ -7,28 +7,29 @@ package com.codelouders.shmetterling.example.api.company
 
 import akka.actor.{Props, Actor}
 import com.codelouders.shmetterling.entity.JsonNotation
+import com.codelouders.shmetterling.events.{UpdateEntityNotification, EntityChangedNotifications, SchmetteringEventBus}
 import com.codelouders.shmetterling.logger.Logging
 import com.codelouders.shmetterling.rest.auth.RestApiUser
 import com.codelouders.shmetterling.rest.{EntityNotFound, UpdateException}
 import com.codelouders.shmetterling.util.HttpRequestContextUtils
-import com.codelouders.shmetterling.websocket.{UpdateEntityNotification, PublishWebSocket}
 import spray.httpx.SprayJsonSupport._
 import spray.routing.RequestContext
 
-case class PutMessage(ctx: RequestContext, company: Company)(implicit logged: RestApiUser)
-case class PatchMessage(ctx: RequestContext, patch: List[JsonNotation], companyId: Int)(implicit logged: RestApiUser)
+case class PutMessage(ctx: RequestContext, company: Company)(implicit val loggedUser: RestApiUser)
+case class PatchMessage(ctx: RequestContext, patch: List[JsonNotation], companyId: Int)(implicit val loggedUser: RestApiUser)
 
 /**
  * Actor handling update messages
  */
-class UpdateActor(companyDao: CompanyDao) extends Actor with PublishWebSocket with Logging with HttpRequestContextUtils {
+class UpdateActor(companyDao: CompanyDao, override val eventBus: SchmetteringEventBus) extends Actor with EntityChangedNotifications
+with Logging with HttpRequestContextUtils {
 
 
   override def receive: Receive = {
 
     //handling put message
-    case PutMessage(ctx, company) =>
-
+    case msg@PutMessage(ctx, company) =>
+      implicit val user = msg.loggedUser
       val updated = companyDao.update(company)
       if (updated == 1) {
         ctx.complete(company)
@@ -37,8 +38,9 @@ class UpdateActor(companyDao: CompanyDao) extends Actor with PublishWebSocket wi
         ctx.complete(EntityNotFound(s"Not found company id ${company.id}"))
       }
 
-    case PatchMessage(ctx, patch, id) =>
+    case msg@PatchMessage(ctx, patch, id) =>
       try {
+        implicit val user = msg.loggedUser
         val updated = companyDao.patch(patch, id)
         if (updated.forall(_ == 1)) {
           val company = companyDao.getById(id)
@@ -58,5 +60,5 @@ class UpdateActor(companyDao: CompanyDao) extends Actor with PublishWebSocket wi
 
 object UpdateActor {
   val Name = s"${ResourceName}PutRouter"
-  def props(companyDao: CompanyDao) = Props(classOf[UpdateActor], companyDao)
+  def props(companyDao: CompanyDao, eventBus: SchmetteringEventBus) = Props(classOf[UpdateActor], companyDao, eventBus)
 }

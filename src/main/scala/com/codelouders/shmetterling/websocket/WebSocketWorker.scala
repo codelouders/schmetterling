@@ -11,10 +11,12 @@ import java.util.concurrent.TimeUnit
 import akka.pattern.ask
 import akka.actor.{ActorRefFactory, Props, ActorRef}
 import akka.util.Timeout
+import com.codelouders.shmetterling.events._
 import com.codelouders.shmetterling.example.auth.oauth2.{OauthRequestParser, OauthAuthorization}
 import com.codelouders.shmetterling.example.auth.oauth2.session.{GetSession, Session, SessionService}
 import com.codelouders.shmetterling.logger.Logging
 import com.codelouders.shmetterling.rest.auth.{RestApiUser, NoAuthorisation, Authorization}
+import com.codelouders.shmetterling.util.JsonUtil
 import spray.can.websocket
 import spray.can.websocket.FrameCommandFailed
 import spray.can.websocket.frame.TextFrame
@@ -25,13 +27,20 @@ import scala.concurrent.Await
 
 
 object WebSocketWorker {
-  def props(serverConnection: ActorRef, authorization: Authorization) = Props(classOf[WebSocketWorker], serverConnection, authorization)
+  def props(serverConnection: ActorRef, authorization: Authorization, eventBus: SchmetteringEventBus) = {
+    Props(classOf[WebSocketWorker], serverConnection, authorization, eventBus)
+  }
 }
 
-class WebSocketWorker(val serverConnection: ActorRef, authorization: Authorization)
+class WebSocketWorker(val serverConnection: ActorRef, authorization: Authorization, eventBus: SchmetteringEventBus)
   extends HttpServiceActor with Logging with websocket.WebSocketServerWorker {
 
   var user: Option[RestApiUser] = None
+
+  override def preStart() = {
+    super.preStart()
+    eventBus.subscribe(self, EntityChanged)
+  }
 
   override def receive = auth orElse handshaking orElse businessLogicNoUpgrade orElse closeLogic
 
@@ -68,19 +77,22 @@ class WebSocketWorker(val serverConnection: ActorRef, authorization: Authorizati
       sender() ! x
 
     // push message to client
-    case Push(msg) => send(TextFrame(msg))
+    case notification@PubSubNotification(_, msg) if msg.isInstanceOf[PubSubEntityChangeMessage] =>
+      send(TextFrame(JsonUtil.serialize(msg)))
 
-    case PushToUser(authUser, msg) =>
+    case notification@PubSubNotification(_, msg) if msg.isInstanceOf[NotifyUserMessage] =>
       user match {
         case Some(usr) =>
-          if (authUser.id == usr.id)
-            send(TextFrame(msg))
+          if (msg.asInstanceOf[NotifyUserMessage].user.id == usr.id)
+            send(TextFrame(JsonUtil.serialize(msg)))
         case None if authorization == NoAuthorisation =>
-          send(TextFrame(msg))
+          send(TextFrame(JsonUtil.serialize(msg)))
       }
 
     case x: FrameCommandFailed =>
       log.error("frame command failed", x)
+
+
   }
 
   // only for testing purpose - should be configurable

@@ -7,6 +7,7 @@ package com.codelouders.shmetterling.rest
 
 import akka.actor.ActorContext
 import com.codelouders.shmetterling.entity.JsonNotation
+import com.codelouders.shmetterling.events.SchmetteringEventBus
 import com.codelouders.shmetterling.rest.auth.{NoAuthorisation, Authorization, RestApiUser}
 import spray.json.DefaultJsonProtocol._
 import spray.routing._
@@ -61,5 +62,5 @@ trait BaseResource extends HttpServiceBase {
 
 
 trait BaseResourceBuilder {
-  def create(actorContext: ActorContext, auth: Authorization): BaseResource
+  def create(actorContext: ActorContext, auth: Authorization, eventBus: SchmetteringEventBus): BaseResource
 }

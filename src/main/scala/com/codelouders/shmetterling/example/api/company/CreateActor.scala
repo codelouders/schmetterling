@@ -7,10 +7,10 @@ package com.codelouders.shmetterling.example.api.company
 
 import akka.actor.{Props, Actor}
 import com.codelouders.shmetterling.entity.EntityHelper
+import com.codelouders.shmetterling.events.{SchmetteringEventBus, CreateEntityNotification, EntityChangedNotifications}
 import com.codelouders.shmetterling.logger.Logging
 import com.codelouders.shmetterling.rest.auth.RestApiUser
 import com.codelouders.shmetterling.util.HttpRequestContextUtils
-import com.codelouders.shmetterling.websocket.{CreateEntityNotification, PublishWebSocket}
 import spray.httpx.SprayJsonSupport._
 import spray.routing.RequestContext
 
@@ -20,7 +20,8 @@ case class CreateMessage(ctx: RequestContext, person: Company)(implicit val logg
 /**
  * Actor handling person create message
  */
-class CreateActor(companyDao: CompanyDao) extends Actor with Logging with PublishWebSocket with HttpRequestContextUtils with EntityHelper  {
+class CreateActor(companyDao: CompanyDao, override val eventBus: SchmetteringEventBus) extends Actor
+with Logging with EntityChangedNotifications with HttpRequestContextUtils with EntityHelper  {
 
   override val logTag = getClass.getName
 
@@ -28,6 +29,7 @@ class CreateActor(companyDao: CompanyDao) extends Actor with Logging with Publis
 
     case cm@CreateMessage(ctx, company) =>
       try {
+        implicit val user = cm.loggedUser
         val added = company.copy(id = Some(companyDao.create(company)))
         ctx.complete(added)
         publishAll(CreateEntityNotification(ResourceName, entityUri(getRequestUri(ctx), added), added))
@@ -42,5 +44,5 @@ class CreateActor(companyDao: CompanyDao) extends Actor with Logging with Publis
 
 object CreateActor {
   val Name = s"${ResourceName}CreateRouter"
-  def props(companyDao: CompanyDao) = Props(classOf[CreateActor], companyDao)
+  def props(companyDao: CompanyDao, eventBus: SchmetteringEventBus) = Props(classOf[CreateActor], companyDao, eventBus)
 }

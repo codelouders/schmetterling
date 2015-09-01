@@ -6,11 +6,11 @@ package com.codelouders.shmetterling.rest.auth
  * Created on 18/08/2015
  */
 trait RestApiUser{
-  def id: Option[Int]
+  val id: Option[Int]
 }
 
 object NoAuthUser extends RestApiUser {
-  override def id: Option[Int] = Some(1)
+  override val id: Option[Int] = Some(1)
 }
 
 trait AuthenticatedUser extends RestApiUser {

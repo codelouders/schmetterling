@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit
 import akka.pattern.ask
 import akka.actor.{ActorRef, ActorContext}
 import akka.util.Timeout
+import com.codelouders.shmetterling.events.SchmetteringEventBus
 import com.codelouders.shmetterling.example.auth.oauth2.session._
 import com.codelouders.shmetterling.logger.Logging
 import com.codelouders.shmetterling.rest.{BaseResourceBuilder, BaseResource}
@@ -30,8 +31,8 @@ import scala.util.{Failure, Success}
  * trait DatabaseAccess - for db access
  *
  */
-class OauthApi(val actorContext: ActorContext, sessionManager: ActorRef, authUserDao: OauthUserDao, override val authorization: Authorization)
-  extends BaseResource with Logging {
+class OauthApi(val actorContext: ActorContext, sessionManager: ActorRef, authUserDao: OauthUserDao,
+               override val authorization: Authorization, eventBus: SchmetteringEventBus) extends BaseResource with Logging {
 
   private implicit val timeout = Timeout(1, TimeUnit.SECONDS)
 
@@ -86,7 +87,7 @@ class OauthApi(val actorContext: ActorContext, sessionManager: ActorRef, authUse
 }
 
 class OauthApiBuilder extends BaseResourceBuilder{
-  override def create(actorContext: ActorContext, authorization: Authorization): BaseResource = {
-    new OauthApi(actorContext, SessionService.getSessionManager, new OauthUserDao, authorization)
+  override def create(actorContext: ActorContext, authorization: Authorization, eventBus: SchmetteringEventBus): BaseResource = {
+    new OauthApi(actorContext, SessionService.getSessionManager, new OauthUserDao, authorization, eventBus)
   }
 }

@@ -8,6 +8,7 @@ package com.codelouders.shmetterling.example.api.person
 import akka.actor.ActorContext
 import akka.routing.RoundRobinPool
 import com.codelouders.shmetterling.entity.JsonNotation
+import com.codelouders.shmetterling.events.SchmetteringEventBus
 import com.codelouders.shmetterling.logger.Logging
 import com.codelouders.shmetterling.rest.{BaseResourceBuilder, BaseResource}
 import com.codelouders.shmetterling.rest.auth.{RestApiUser, Authorization}
@@ -22,13 +23,13 @@ import spray.json.DefaultJsonProtocol._
  * trait BaseResourceApi - for initialization
  *
  */
-class PersonApi(val actorContext: ActorContext, personDao: PersonDao, override val authorization: Authorization)
-  extends BaseResource with Logging {
+class PersonApi(val actorContext: ActorContext, personDao: PersonDao, override val authorization: Authorization,
+                eventBus: SchmetteringEventBus) extends BaseResource with Logging {
 
-  val personCreateHandler = actorContext.actorOf(RoundRobinPool(2).props(CreateActor.props(personDao)), CreateActor.Name)
-  val personPutHandler = actorContext.actorOf(RoundRobinPool(5).props(UpdateActor.props(personDao)), UpdateActor.Name)
-  val personGetHandler = actorContext.actorOf(RoundRobinPool(20).props(GetActor.props(personDao)), GetActor.Name)
-  val personDeleteHandler = actorContext.actorOf(RoundRobinPool(2).props(DeleteActor.props(personDao)), DeleteActor.Name)
+  val personCreateHandler = actorContext.actorOf(RoundRobinPool(2).props(CreateActor.props(personDao, eventBus)), CreateActor.Name)
+  val personPutHandler = actorContext.actorOf(RoundRobinPool(5).props(UpdateActor.props(personDao, eventBus)), UpdateActor.Name)
+  val personGetHandler = actorContext.actorOf(RoundRobinPool(20).props(GetActor.props(personDao, eventBus)), GetActor.Name)
+  val personDeleteHandler = actorContext.actorOf(RoundRobinPool(2).props(DeleteActor.props(personDao, eventBus)), DeleteActor.Name)
 
   override val logTag: String = getClass.getName
 
@@ -75,7 +76,7 @@ class PersonApi(val actorContext: ActorContext, personDao: PersonDao, override v
 }
 
 class PersonApiBuilder extends BaseResourceBuilder{
-  override def create(actorContext: ActorContext, authorization: Authorization): BaseResource = {
-    new PersonApi(actorContext, new PersonDao, authorization)
+  override def create(actorContext: ActorContext, authorization: Authorization, eventBus: SchmetteringEventBus): BaseResource = {
+    new PersonApi(actorContext, new PersonDao, authorization, eventBus)
   }
 }

@@ -7,12 +7,13 @@
 package com.codelouders.shmetterling.websocket
 
 import akka.actor.{Props, Actor}
+import com.codelouders.shmetterling.events.SchmetteringEventBus
 import com.codelouders.shmetterling.logger.Logging
 import com.codelouders.shmetterling.rest.auth.{Authorization, RestApiUser}
 import spray.can.Http
 
 
-class WebSocketServer(authorization: Authorization) extends Actor with Logging {
+class WebSocketServer(authorization: Authorization, eventBus: SchmetteringEventBus) extends Actor with Logging {
 
   def receive = {
 
@@ -21,19 +22,8 @@ class WebSocketServer(authorization: Authorization) extends Actor with Logging {
 
       val serverConnection = sender()
       // should be match with a session/user - this way it will be possible to push message only to specific user
-      val conn = context.actorOf(WebSocketWorker.props(serverConnection, authorization))
+      val conn = context.actorOf(WebSocketWorker.props(serverConnection, authorization, eventBus))
       serverConnection ! Http.Register(conn)
-
-    case push: Push =>
-      // Push message to all open connections
-      context.children.foreach {
-        _ ! push
-      }
-
-    case push: PushToUser =>
-      context.children.foreach {
-        _ ! push
-      }
 
   }
 
@@ -43,9 +33,7 @@ class WebSocketServer(authorization: Authorization) extends Actor with Logging {
 object WebSocketServer {
   val Name = "websocket"
 
-  def props(authorization: Authorization) = Props(classOf[WebSocketServer], authorization)
+  def props(authorization: Authorization, eventBus: SchmetteringEventBus) = {
+    Props(classOf[WebSocketServer], authorization, eventBus)
+  }
 }
-
-final case class Push(msg: String)
-
-final case class PushToUser(user: RestApiUser, msg: String)

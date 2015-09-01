@@ -7,6 +7,7 @@
 package com.codelouders.shmetterling.integration
 
 import akka.actor.ActorContext
+import com.codelouders.shmetterling.events.SchmetteringEventBus
 import com.codelouders.shmetterling.example.api.company.{Company, CompanyApi, CompanyApiBuilder, CompanyDao}
 import com.codelouders.shmetterling.example.auth.oauth2.{OauthUser, OauthApiBuilder, OauthApi, OauthUserDao}
 import com.codelouders.shmetterling.example.auth.oauth2.provider.MysqlAuthorizationProvider
@@ -25,19 +26,20 @@ trait Mocking extends MockitoSugar {
   val oauthApi = mock[OauthApiBuilder]
   val oauthDao = mock[OauthUserDao]
   val oauthProvider = mock[MysqlAuthorizationProvider]
+  val eventBus = mock[SchmetteringEventBus]
 
 
-  when(companyApi.create(any(classOf[ActorContext]), any(classOf[Authorization]))).thenAnswer(new Answer[CompanyApi] {
+  when(companyApi.create(any(classOf[ActorContext]), any(classOf[Authorization]), any(classOf[SchmetteringEventBus]))).thenAnswer(new Answer[CompanyApi] {
     override def answer(invocationOnMock: InvocationOnMock): CompanyApi = {
       val args = invocationOnMock.getArguments
-      new CompanyApi(args(0).asInstanceOf[ActorContext], companyDb, NoAuthorisation)
+      new CompanyApi(args(0).asInstanceOf[ActorContext], companyDb, NoAuthorisation, eventBus)
     }
   })
 
-  when(oauthApi.create(any(classOf[ActorContext]), any(classOf[Authorization]))).thenAnswer(new Answer[OauthApi] {
+  when(oauthApi.create(any(classOf[ActorContext]), any(classOf[Authorization]), any(classOf[SchmetteringEventBus]))).thenAnswer(new Answer[OauthApi] {
     override def answer(invocationOnMock: InvocationOnMock): OauthApi = {
       val args = invocationOnMock.getArguments
-      new OauthApi(args(0).asInstanceOf[ActorContext], SessionService.getSessionManager, oauthDao, NoAuthorisation)
+      new OauthApi(args(0).asInstanceOf[ActorContext], SessionService.getSessionManager, oauthDao, NoAuthorisation, eventBus)
     }
   })
 
