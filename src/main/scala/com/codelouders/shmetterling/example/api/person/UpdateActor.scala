@@ -11,7 +11,7 @@ import com.codelouders.shmetterling.entity.JsonNotation
 import com.codelouders.shmetterling.logger.Logging
 import com.codelouders.shmetterling.rest.{EntityNotFound, UpdateException}
 import com.codelouders.shmetterling.util.HttpRequestContextUtils
-import com.codelouders.shmetterling.websocket.{UpdatePublishMessage, PublishWebSocket}
+import com.codelouders.shmetterling.websocket.{UpdateEntityNotification, PublishWebSocket}
 import spray.routing.RequestContext
 import spray.httpx.SprayJsonSupport._
 
@@ -32,7 +32,7 @@ class UpdateActor(personDao: PersonDao) extends Actor with PublishWebSocket with
       val updated = personDao.update(person)
       if (updated == 1) {
         ctx.complete(person)
-        publishAll(UpdatePublishMessage(ResourceName, getRequestUri(ctx), person))
+        publishAll(UpdateEntityNotification(ResourceName, getRequestUri(ctx), person))
       } else {
         ctx.complete(EntityNotFound(s"Not found person id ${person.id}"))
       }
@@ -45,7 +45,7 @@ class UpdateActor(personDao: PersonDao) extends Actor with PublishWebSocket with
         if (updated.forall(_ == 1)) {
           val person = personDao.getById(id)
           ctx.complete(person)
-          publishAll(UpdatePublishMessage(ResourceName, getRequestUri(ctx), person))
+          publishAll(UpdateEntityNotification(ResourceName, getRequestUri(ctx), person))
         } else {
           ctx.complete(EntityNotFound(s"Not found person id $id"))
         }

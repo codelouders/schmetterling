@@ -10,7 +10,7 @@ import com.codelouders.shmetterling.entity.EntityHelper
 import com.codelouders.shmetterling.logger.Logging
 import com.codelouders.shmetterling.rest.auth.RestApiUser
 import com.codelouders.shmetterling.util.HttpRequestContextUtils
-import com.codelouders.shmetterling.websocket.{CreatePublishMessage, PublishWebSocket}
+import com.codelouders.shmetterling.websocket.{CreateEntityNotification, PublishWebSocket}
 import spray.httpx.SprayJsonSupport._
 import spray.routing.RequestContext
 
@@ -30,7 +30,7 @@ class CreateActor(companyDao: CompanyDao) extends Actor with Logging with Publis
       try {
         val added = company.copy(id = Some(companyDao.create(company)))
         ctx.complete(added)
-        publishAll(CreatePublishMessage(ResourceName, entityUri(getRequestUri(ctx), added), added))
+        publishAll(CreateEntityNotification(ResourceName, entityUri(getRequestUri(ctx), added), added))
         L.debug(s"Company create success")
       } catch {
         case e: Exception =>

@@ -9,7 +9,7 @@ import akka.actor.{Props, Actor}
 import com.codelouders.shmetterling.entity.EntityHelper
 import com.codelouders.shmetterling.logger.Logging
 import com.codelouders.shmetterling.util.HttpRequestContextUtils
-import com.codelouders.shmetterling.websocket.{CreatePublishMessage, PublishWebSocket}
+import com.codelouders.shmetterling.websocket.{CreateEntityNotification, PublishWebSocket}
 import spray.routing.RequestContext
 import spray.httpx.SprayJsonSupport._
 
@@ -29,7 +29,7 @@ class CreateActor(personDao: PersonDao) extends Actor with Logging with PublishW
       try {
         val addedPerson = person.copy(id = Some(personDao.create(person)))
         ctx.complete(addedPerson)
-        publishAll(CreatePublishMessage(ResourceName, entityUri(getRequestUri(ctx), addedPerson), addedPerson))
+        publishAll(CreateEntityNotification(ResourceName, entityUri(getRequestUri(ctx), addedPerson), addedPerson))
         L.debug(s"Person create success")
       } catch {
         case e: Exception =>

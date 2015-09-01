@@ -8,7 +8,7 @@ package com.codelouders.shmetterling.example.api.person
 import akka.actor.{Props, Actor}
 import com.codelouders.shmetterling.logger.Logging
 import com.codelouders.shmetterling.rest.EntityNotFound
-import com.codelouders.shmetterling.websocket.{DeletePublishMessage, PublishWebSocket}
+import com.codelouders.shmetterling.websocket.{DeleteEntityNotification, PublishWebSocket}
 import spray.routing.RequestContext
 import spray.httpx.SprayJsonSupport._
 
@@ -30,7 +30,7 @@ class DeleteActor(personDao: PersonDao) extends Actor with PublishWebSocket with
       } else {
         ctx.complete(new EntityNotFound("Trying to delete non existent entity"))
       }
-      publishAll(DeletePublishMessage(ResourceName, personId))
+      publishAll(DeleteEntityNotification(ResourceName, personId))
 
   }
 

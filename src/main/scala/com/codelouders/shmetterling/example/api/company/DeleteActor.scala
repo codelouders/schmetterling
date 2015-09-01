@@ -9,7 +9,7 @@ import akka.actor.{Props, Actor}
 import com.codelouders.shmetterling.logger.Logging
 import com.codelouders.shmetterling.rest.EntityNotFound
 import com.codelouders.shmetterling.rest.auth.RestApiUser
-import com.codelouders.shmetterling.websocket.{DeletePublishMessage, PublishWebSocket}
+import com.codelouders.shmetterling.websocket.{DeleteEntityNotification, PublishWebSocket}
 import spray.routing.RequestContext
 
 case class DeleteMessage(ctx: RequestContext, companyId: Int)(implicit logged: RestApiUser)
@@ -28,7 +28,7 @@ class DeleteActor(companyDao: CompanyDao) extends Actor with PublishWebSocket wi
       } else {
         ctx.complete(new EntityNotFound("Trying to delete non existent entity"))
       }
-      publishAll(DeletePublishMessage(ResourceName, companyId))
+      publishAll(DeleteEntityNotification(ResourceName, companyId))
 
   }
 
