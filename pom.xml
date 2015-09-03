@@ -24,9 +24,9 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/vixxx123/scalasprayslickexample</url>
-        <connection>scm:git:git://github.com/vixxx123/scalasprayslickexample.git</connection>
-        <developerConnection>scm:git:git@github.com:vixxx123/scalasprayslickexample.git</developerConnection>
+        <url>https://github.com/codelouders/schmetterling</url>
+        <connection>scm:git:git://github.com/codelouders/schmetterling.git</connection>
+        <developerConnection>scm:git:git@github.com:codelouders/schmetterling.git</developerConnection>
     </scm>
 
     <developers>
