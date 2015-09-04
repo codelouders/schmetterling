@@ -30,10 +30,15 @@ import scala.concurrent.duration._
  * @param authorization - authorisation method - default: NoAuthorisation
  */
 class Rest(actorSystem: ActorSystem, listOfResourceApiBuilders: List[BaseResourceBuilder], loggers: List[Logger],
-           authorization: Authorization = NoAuthorisation) {
+           authorization: Authorization = NoAuthorisation, postInit: () => Any = {() => Unit}) {
+
 
   // we need an ActorSystem to host our application in
   implicit val system = actorSystem
+
+  def withPostApiInit(postInitFunction: () => Unit): Rest = {
+    new Rest(actorSystem, listOfResourceApiBuilders, loggers, authorization, postInitFunction)
+  }
 
   def start(): Unit = {
 
@@ -57,6 +62,7 @@ class Rest(actorSystem: ActorSystem, listOfResourceApiBuilders: List[BaseResourc
     val service = system.actorOf(ApiService.props(apis, authorization, eventBus), ApiService.ActorName)
     val server = system.actorOf(WebSocketServer.props(authorization, eventBus), WebSocketServer.Name)
 
+    postInit()
 
     val runWebSocketServer = conf.getBoolean("websocket.run")
 
