@@ -1,23 +1,22 @@
 # Welcome to Schmetterling #
 
-Schmetterling is library which helps you build REST api faster.
+Schmetterling is a library that helps you build REST APIs faster.
 
-Documentation is coming soon...
+Proper documentation is coming up!
 
 
-### Quick start - run example server ###
+### Quick start (run sample server) ###
 
-* Edit db.conf in resources to configure db connection
-* RUN mvn scala:run -DmainClass=com.codelouders.schmetterling.RestExampleApp
+* Edit db.conf in resources to configure your database connection
+* Execute mvn scala:run -DmainClass=com.codelouders.schmetterling.RestExampleApp
 
 ### Features ###
-* Each type of resource and method can have different numbers of actors - easy to optimise performance
+* Each type of resource and method can have different numbers of actors, so you can scale operation-wise
 * Fully integrated with Akka
-* Websocket (push) support
-* Push messaging via websocket to all open connections or to specific user
-* Authorization support + additionally simple OAuth 2 implementation(client_credentials)
+* WebSockets support with push messages
+* Authentication support with basic OAuth2 implementation (client_credentials)
 
-### to do ###
-* configuration of logging levels
+### TODO ###
+* Configurable logging levels
 
-### Have fun ###
+### Enjoy ###
