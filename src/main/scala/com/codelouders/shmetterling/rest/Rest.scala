@@ -54,7 +54,7 @@ class Rest(actorSystem: ActorSystem, listOfResourceApiBuilders: List[BaseResourc
     // start up API service actor
     val apis = authorization.getAuthApiBuilder match {
       case Some(authResourceBuilder) =>
-        listOfResourceApiBuilders :+ authResourceBuilder
+        authResourceBuilder :: listOfResourceApiBuilders
       case None => listOfResourceApiBuilders
     }
 
