@@ -24,6 +24,7 @@ import com.codelouders.schmetterling.rest.{BaseResourceBuilder, BaseResource}
 import com.codelouders.schmetterling.rest.auth.{Authorization, RestApiUser}
 
 
+import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
 
 /**
@@ -40,11 +41,6 @@ class OauthApi(val actorContext: ActorContext, sessionManager: ActorRef, authUse
   private implicit val timeout = Timeout(1, TimeUnit.SECONDS)
 
   override val logTag: String = getClass.getName
-
-  override def init() = {
-    authUserDao.initTable()
-    super.init()
-  }
 
   override def authorizedResource = false
 
@@ -93,7 +89,14 @@ class OauthApi(val actorContext: ActorContext, sessionManager: ActorRef, authUse
 }
 
 class OauthApiBuilder extends BaseResourceBuilder{
+
+  val authUserDao = new OauthUserDao
+
   override def create(actorContext: ActorContext, authorization: Authorization, eventBus: SchmetteringEventBus): BaseResource = {
-    new OauthApi(actorContext, SessionService.getSessionManager, new OauthUserDao, authorization, eventBus)
+    new OauthApi(actorContext, SessionService.getSessionManager, authUserDao, authorization, eventBus)
+  }
+
+  override def init()(implicit ec:ExecutionContext) = {
+    authUserDao.initTable()
   }
 }

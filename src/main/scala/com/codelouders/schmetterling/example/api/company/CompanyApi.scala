@@ -17,6 +17,8 @@ import com.codelouders.schmetterling.logger.Logging
 import com.codelouders.schmetterling.rest.{BaseResourceBuilder, BaseResource}
 import com.codelouders.schmetterling.rest.auth.{Authorization, RestApiUser}
 
+import scala.concurrent.ExecutionContext
+
 
 /**
  * Company API main class
@@ -41,11 +43,6 @@ class CompanyApi(val actorContext: ActorContext, companyDao: CompanyDao, overrid
   private val companyDeleteHandler = actorContext.actorOf(RoundRobinPool(2).props(DeleteActor.props(companyDao, eventBus)), DeleteActor.Name)
 
   override val logTag: String = getClass.getName
-
-  override def init() = {
-    companyDao.initTable()
-    super.init()
-  }
 
   override protected def getResourceName: String = {
     ResourceName
@@ -91,7 +88,14 @@ class CompanyApi(val actorContext: ActorContext, companyDao: CompanyDao, overrid
 }
 
 class CompanyApiBuilder extends BaseResourceBuilder {
+
+  val companyDao = new CompanyDao
+
   override def create(actorContext: ActorContext, authorization: Authorization, eventBus: SchmetteringEventBus): BaseResource = {
-    new CompanyApi(actorContext, new CompanyDao, authorization, eventBus)
+    new CompanyApi(actorContext, companyDao, authorization, eventBus)
+  }
+
+  override def init()(implicit ec:ExecutionContext) = {
+    companyDao.initTable()
   }
 }

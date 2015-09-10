@@ -14,6 +14,8 @@ import com.codelouders.schmetterling.entity.JsonNotation
 import com.codelouders.schmetterling.events.SchmetteringEventBus
 import com.codelouders.schmetterling.rest.auth.{NoAuthorisation, Authorization, RestApiUser}
 
+import scala.concurrent.ExecutionContext
+
 
 /**
  * Base class for all resources api available via REST
@@ -36,11 +38,6 @@ trait BaseResource extends HttpServiceBase {
   def authorizedResource: Boolean
 
   protected def getResourceName: String
-
-  /**
-   * override if resource need to be initialized. For example db table creation etc
-   */
-  def init(): Unit = {}
 
   /**
    * Route for resource
@@ -67,5 +64,11 @@ trait BaseResource extends HttpServiceBase {
 
 
 trait BaseResourceBuilder {
+
   def create(actorContext: ActorContext, auth: Authorization, eventBus: SchmetteringEventBus): BaseResource
+
+  /**
+   * override if resource need to be initialized. For example db table creation etc
+   */
+  def init()(implicit ec: ExecutionContext): Unit = {}
 }

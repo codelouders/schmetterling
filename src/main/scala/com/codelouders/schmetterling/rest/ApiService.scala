@@ -24,7 +24,6 @@ class ApiService(availableApis: List[BaseResourceBuilder], authorization: Author
   extends Actor with HttpServiceBase with Logging {
 
   val apis = availableApis.map{_.create(context, authorization, eventBus)}
-  apis.foreach(_.init())
 
   lazy val routing: Route = apis.foldLeft[Route](null)((a,b) => if (a == null) b.apiRoute() else {a ~ b.apiRoute()})
 

@@ -17,6 +17,8 @@ import com.codelouders.schmetterling.logger.Logging
 import com.codelouders.schmetterling.rest.{BaseResourceBuilder, BaseResource}
 import com.codelouders.schmetterling.rest.auth.{RestApiUser, Authorization}
 
+import scala.concurrent.ExecutionContext
+
 
 /**
  * Person API main class
@@ -37,11 +39,6 @@ class PersonApi(val actorContext: ActorContext, personDao: PersonDao, override v
 
   override protected def getResourceName: String = {
     ResourceName
-  }
-
-  override def init() = {
-    personDao.initTable()
-    super.init()
   }
 
   override def authorizedResource = false
@@ -80,8 +77,15 @@ class PersonApi(val actorContext: ActorContext, personDao: PersonDao, override v
     }
 }
 
-class PersonApiBuilder extends BaseResourceBuilder{
+class PersonApiBuilder extends BaseResourceBuilder {
+
+  private val personDao = new PersonDao
+
   override def create(actorContext: ActorContext, authorization: Authorization, eventBus: SchmetteringEventBus): BaseResource = {
-    new PersonApi(actorContext, new PersonDao, authorization, eventBus)
+    new PersonApi(actorContext, personDao, authorization, eventBus)
+  }
+
+  override def init()(implicit ec:ExecutionContext) = {
+    personDao.initTable()
   }
 }

@@ -38,6 +38,7 @@ class Rest(actorSystem: ActorSystem, listOfResourceApiBuilders: List[BaseResourc
 
   // we need an ActorSystem to host our application in
   implicit val system = actorSystem
+  implicit val ec = system.dispatcher
 
   def withPostApiInit(postInitFunction: () => Unit): Rest = {
     new Rest(actorSystem, listOfResourceApiBuilders, loggers, authorization, postInitFunction)
@@ -55,17 +56,18 @@ class Rest(actorSystem: ActorSystem, listOfResourceApiBuilders: List[BaseResourc
     authorization.init()
 
     // start up API service actor
-    val apis = authorization.getAuthApiBuilder match {
+    val apisBuilders = authorization.getAuthApiBuilder match {
       case Some(authResourceBuilder) =>
         authResourceBuilder :: listOfResourceApiBuilders
       case None => listOfResourceApiBuilders
     }
 
-    val eventBus =  new SchmetteringEventBus
-    val service = system.actorOf(ApiService.props(apis, authorization, eventBus), ApiService.ActorName)
-    val server = system.actorOf(WebSocketServer.props(authorization, eventBus), WebSocketServer.Name)
-
+    apisBuilders.foreach(_.init())
     postInit()
+
+    val eventBus =  new SchmetteringEventBus
+    val service = system.actorOf(ApiService.props(apisBuilders, authorization, eventBus), ApiService.ActorName)
+    val server = system.actorOf(WebSocketServer.props(authorization, eventBus), WebSocketServer.Name)
 
     val runWebSocketServer = conf.getBoolean("websocket.run")
 
