@@ -18,23 +18,25 @@ class ConsoleLogger extends Logger {
 //  dateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"))
 
   override def debug(msg: String, tag: String): Unit = {
-    println(s"DEBUG | ${dateFormatter.format(new Date())} | $tag | $msg")
-  }
-
-  override def warn(msg: String, tag: String): Unit = {
-    println(s"WARN | ${dateFormatter.format(new Date())} | $tag | $msg")
-  }
-
-  override def error(msg: String, tag: String, cause: Throwable, stack: Array[StackTraceElement]): Unit = {
-    println(s"ERROR | ${dateFormatter.format(new Date())} | $tag | MSG   | $msg")
-    println(s"ERROR | ${dateFormatter.format(new Date())} | $tag | CAUSE | $cause")
-    stack.foreach {
-      stackElement =>
-        println(s"ERROR | $tag | STACK | $stackElement")
-    }
+    println(s"[DEBUG] | ${dateFormatter.format(new Date())} | $tag | $msg")
   }
 
   override def info(msg: String, tag: String): Unit = {
-    println(s"INFO | ${dateFormatter.format(new Date())} | $tag | $msg")
+    println(s"[INFO] | ${dateFormatter.format(new Date())} | $tag | $msg")
   }
+
+  override def warn(msg: String, tag: String): Unit = {
+    println(s"[WARN] | ${dateFormatter.format(new Date())} | $tag | $msg")
+  }
+
+  override def error(msg: String, tag: String, cause: Throwable, stack: Array[StackTraceElement]): Unit = {
+    println(s"[ERROR] | ${dateFormatter.format(new Date())} | $tag | MSG   | $msg")
+    println(s"[ERROR] | ${dateFormatter.format(new Date())} | $tag | CAUSE | $cause")
+    stack.foreach {
+      stackElement =>
+        println(s"[ERROR] | $tag | STACK | $stackElement")
+    }
+  }
+
+
 }

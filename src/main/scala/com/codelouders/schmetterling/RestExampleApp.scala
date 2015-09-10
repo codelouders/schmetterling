@@ -12,14 +12,14 @@ import com.codelouders.schmetterling.example.api.company.CompanyApiBuilder
 import com.codelouders.schmetterling.example.api.person.PersonApiBuilder
 import com.codelouders.schmetterling.auth.oauth2.{OauthAuthorization, OauthConfig}
 import com.codelouders.schmetterling.auth.oauth2.provider.MysqlAuthorizationProvider
-import com.codelouders.schmetterling.logger.{FileLogger, ConsoleLogger}
+import com.codelouders.schmetterling.logger.{DebugLevel, ErrorLevel, FileLogger, ConsoleLogger}
 import com.codelouders.schmetterling.rest.Rest
 
 
 // Without authorization
 object RestExampleApp extends App {
   new Rest(ActorSystem("on-spray-can"), List(new PersonApiBuilder,
-    new CompanyApiBuilder), List(new ConsoleLogger, new FileLogger("c:\\temp\\rest-container.log")))
+    new CompanyApiBuilder), List(new ConsoleLogger, new FileLogger("c:\\temp\\rest-container.log", ErrorLevel)))
     .withPostApiInit({() => println("Run init function")}).start()
 }
 
@@ -28,5 +28,6 @@ object RestWithOauthExampleApp extends App {
   val oauthConfig = new OauthConfig(new MysqlAuthorizationProvider())
 
   new Rest(ActorSystem("on-spray-can"), List(new PersonApiBuilder,
-    new CompanyApiBuilder), List(new ConsoleLogger), new OauthAuthorization(oauthConfig)).start()
+    new CompanyApiBuilder), List(new ConsoleLogger, new FileLogger("c:\\temp\\rest-container.log", DebugLevel)),
+    new OauthAuthorization(oauthConfig)).start()
 }

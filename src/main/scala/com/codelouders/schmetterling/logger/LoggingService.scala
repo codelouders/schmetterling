@@ -24,24 +24,25 @@ class LoggingService(loggers: List[Logger], loggerSettings: LoggerSettings) exte
 
   override def receive: Receive = {
     case Debug(msg, className, tag) =>
-      if (getLogLevel(tag) == DebugLevel){
+      val lvl = getLogLevel(tag)
+      if (lvl == DebugLevel){
         loggers.foreach{ _.debug(msg, tag) }
       }
 
     case Info(msg, className, tag) =>
-      if (getLogLevel(tag) == InfoLevel){
+      val lvl = getLogLevel(tag)
+      if (lvl == DebugLevel || lvl == InfoLevel){
         loggers.foreach{ _.info(msg, tag)}
       }
 
     case Warning(msg, className, tag) =>
-      if (getLogLevel(tag) == WarningLevel){
+      val lvl = getLogLevel(tag)
+      if (lvl == DebugLevel || lvl == InfoLevel || lvl == WarningLevel){
         loggers.foreach{ _.warn(msg, tag)}
       }
 
     case Error(msg, className, tag, cause, stack) =>
-      if (getLogLevel(tag) == ErrorLevel){
-        loggers.foreach{ _.error(msg, tag, cause, stack)}
-      }
+      loggers.foreach{ _.error(msg, tag, cause, stack)}
 
     case any: Any =>
       throw new Exception("Log type message unknown")
