@@ -1,4 +1,4 @@
-package com.codelouders.schmetterling.example.auth.oauth2
+package com.codelouders.schmetterling.auth.oauth2
 
 import scala.concurrent.{Future, ExecutionContext}
 import java.util.concurrent.TimeUnit
@@ -12,7 +12,7 @@ import spray.routing.AuthenticationFailedRejection.{CredentialsMissing, Credenti
 import spray.routing.{AuthenticationFailedRejection, RequestContext}
 import spray.routing.authentication.Authentication
 
-import com.codelouders.schmetterling.example.auth.oauth2.session.{GetSession, Session, SessionService}
+import com.codelouders.schmetterling.auth.oauth2.session.{GetSession, Session, SessionService}
 import com.codelouders.schmetterling.logger.Logging
 import com.codelouders.schmetterling.rest.BaseResourceBuilder
 import com.codelouders.schmetterling.rest.auth.{RestApiUser, Authorization}

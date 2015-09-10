@@ -10,8 +10,8 @@ import akka.actor.ActorSystem
 
 import com.codelouders.schmetterling.example.api.company.CompanyApiBuilder
 import com.codelouders.schmetterling.example.api.person.PersonApiBuilder
-import com.codelouders.schmetterling.example.auth.oauth2.{OauthAuthorization, OauthConfig}
-import com.codelouders.schmetterling.example.auth.oauth2.provider.MysqlAuthorizationProvider
+import com.codelouders.schmetterling.auth.oauth2.{OauthAuthorization, OauthConfig}
+import com.codelouders.schmetterling.auth.oauth2.provider.MysqlAuthorizationProvider
 import com.codelouders.schmetterling.logger.{FileLogger, ConsoleLogger}
 import com.codelouders.schmetterling.rest.Rest
 

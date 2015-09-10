@@ -47,41 +47,45 @@ class CompanyApi(val actorContext: ActorContext, companyDao: CompanyDao, overrid
     super.init()
   }
 
+  override protected def getResourceName: String = {
+    ResourceName
+  }
+
   override def authorizedResource = true
 
   override def route(implicit userAuth: RestApiUser) = {
-    pathPrefix(ResourceName) {
-      pathEnd {
-        get {
-          ctx => companyGetHandler ! GetMessage(ctx, None)
-        } ~
-          post {
-            entity(as[Company]) {
-              company =>
-                ctx => companyCreateHandler ! CreateMessage(ctx, company)
-            }
-          }
+
+    pathEnd {
+      get {
+        ctx => companyGetHandler ! GetMessage(ctx, None)
       } ~
-      pathPrefix(IntNumber) {
-        entityId => {
-          pathEnd {
-            get {
-              ctx => companyGetHandler ! GetMessage(ctx, Some(entityId))
-            } ~ put {
-              entity(as[Company]) { entity =>
-                ctx => companyPutHandler ! PutMessage(ctx, entity.copy(id = Some(entityId)))
-              }
-            } ~ delete {
-              ctx => companyDeleteHandler ! DeleteMessage(ctx, entityId)
-            } ~ patch {
-              entity(as[List[JsonNotation]]) { patch =>
-                ctx => companyPutHandler ! PatchMessage(ctx, patch, entityId)
-              }
+        post {
+          entity(as[Company]) {
+            company =>
+              ctx => companyCreateHandler ! CreateMessage(ctx, company)
+          }
+        }
+    } ~
+    pathPrefix(IntNumber) {
+      entityId => {
+        pathEnd {
+          get {
+            ctx => companyGetHandler ! GetMessage(ctx, Some(entityId))
+          } ~ put {
+            entity(as[Company]) { entity =>
+              ctx => companyPutHandler ! PutMessage(ctx, entity.copy(id = Some(entityId)))
+            }
+          } ~ delete {
+            ctx => companyDeleteHandler ! DeleteMessage(ctx, entityId)
+          } ~ patch {
+            entity(as[List[JsonNotation]]) { patch =>
+              ctx => companyPutHandler ! PatchMessage(ctx, patch, entityId)
             }
           }
         }
       }
     }
+
   }
 
 }

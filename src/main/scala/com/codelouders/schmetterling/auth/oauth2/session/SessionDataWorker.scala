@@ -4,7 +4,7 @@
  * Created on 2015-04-29
  * Project: ScalaRest
  */
-package com.codelouders.schmetterling.example.auth.oauth2.session
+package com.codelouders.schmetterling.auth.oauth2.session
 
 import java.util.concurrent.TimeUnit
 

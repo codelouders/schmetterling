@@ -35,6 +35,10 @@ class PersonApi(val actorContext: ActorContext, personDao: PersonDao, override v
 
   override val logTag: String = getClass.getName
 
+  override protected def getResourceName: String = {
+    ResourceName
+  }
+
   override def init() = {
     personDao.initTable()
     super.init()
@@ -43,33 +47,32 @@ class PersonApi(val actorContext: ActorContext, personDao: PersonDao, override v
   override def authorizedResource = false
 
   override def route(implicit restApiUser: RestApiUser) =
-    pathPrefix(ResourceName) {
-      pathEnd {
-        get {
-          ctx => personGetHandler ! GetMessage(ctx, None)
-        } ~
-        post {
-          entity(as[Person]) {
-            entity =>
-              ctx => personCreateHandler ! CreateMessage(ctx, entity)
-          }
-        }
+
+    pathEnd {
+      get {
+        ctx => personGetHandler ! GetMessage(ctx, None)
       } ~
-      pathPrefix (IntNumber){
-        entityId => {
-          pathEnd {
-            get {
-              ctx => personGetHandler ! GetMessage(ctx, Some(entityId))
-            } ~ put {
-              entity(as[Person]) { entity =>
-                ctx => personPutHandler ! PutMessage(ctx, entity.copy(id = Some(entityId)))
-              }
-            } ~ delete {
-              ctx => personDeleteHandler ! DeleteMessage(ctx, entityId)
-            } ~ patch {
-              entity(as[List[JsonNotation]]) { patch =>
-                ctx => personPutHandler ! PatchMessage(ctx, patch, entityId)
-              }
+      post {
+        entity(as[Person]) {
+          entity =>
+            ctx => personCreateHandler ! CreateMessage(ctx, entity)
+        }
+      }
+    } ~
+    pathPrefix (IntNumber){
+      entityId => {
+        pathEnd {
+          get {
+            ctx => personGetHandler ! GetMessage(ctx, Some(entityId))
+          } ~ put {
+            entity(as[Person]) { entity =>
+              ctx => personPutHandler ! PutMessage(ctx, entity.copy(id = Some(entityId)))
+            }
+          } ~ delete {
+            ctx => personDeleteHandler ! DeleteMessage(ctx, entityId)
+          } ~ patch {
+            entity(as[List[JsonNotation]]) { patch =>
+              ctx => personPutHandler ! PatchMessage(ctx, patch, entityId)
             }
           }
         }

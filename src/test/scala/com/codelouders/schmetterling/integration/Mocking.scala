@@ -17,9 +17,9 @@ import org.scalatest.mock.MockitoSugar
 
 import com.codelouders.schmetterling.events.SchmetteringEventBus
 import com.codelouders.schmetterling.example.api.company.{Company, CompanyApi, CompanyApiBuilder, CompanyDao}
-import com.codelouders.schmetterling.example.auth.oauth2.{OauthUser, OauthApiBuilder, OauthApi, OauthUserDao}
-import com.codelouders.schmetterling.example.auth.oauth2.provider.MysqlAuthorizationProvider
-import com.codelouders.schmetterling.example.auth.oauth2.session.SessionService
+import com.codelouders.schmetterling.auth.oauth2.{OauthUser, OauthApiBuilder, OauthApi, OauthUserDao}
+import com.codelouders.schmetterling.auth.oauth2.provider.MysqlAuthorizationProvider
+import com.codelouders.schmetterling.auth.oauth2.session.SessionService
 import com.codelouders.schmetterling.rest.auth.{NoAuthorisation, Authorization}
 
 

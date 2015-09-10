@@ -1,4 +1,4 @@
-package com.codelouders.schmetterling.example.auth.oauth2
+package com.codelouders.schmetterling.auth.oauth2
 
 
 /**

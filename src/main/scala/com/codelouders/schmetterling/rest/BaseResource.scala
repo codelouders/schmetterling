@@ -35,6 +35,8 @@ trait BaseResource extends HttpServiceBase {
 
   def authorizedResource: Boolean
 
+  protected def getResourceName: String
+
   /**
    * override if resource need to be initialized. For example db table creation etc
    */
@@ -46,7 +48,7 @@ trait BaseResource extends HttpServiceBase {
    */
   def route(implicit user: RestApiUser): Route
 
-  final private[rest] def apiRoute() = auth { user => route(user) }
+  final private[rest] def apiRoute() = pathPrefix(getResourceName) {auth { user => route(user) }}
 
   /**
    * Authorization

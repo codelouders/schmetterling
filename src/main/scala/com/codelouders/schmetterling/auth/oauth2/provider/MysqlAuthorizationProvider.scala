@@ -3,13 +3,13 @@
  *
  * Created on 12/05/2015
  */
-package com.codelouders.schmetterling.example.auth.oauth2.provider
+package com.codelouders.schmetterling.auth.oauth2.provider
 
 import scala.slick.driver.MySQLDriver.simple._
 import scala.slick.lifted.TableQuery
 
 import com.codelouders.schmetterling.database.DatabaseAccess
-import com.codelouders.schmetterling.example.auth.oauth2.{OauthUserT, OauthUser}
+import com.codelouders.schmetterling.auth.oauth2.{OauthUserT, OauthUser}
 import com.codelouders.schmetterling.util.CryptoUtil
 
 

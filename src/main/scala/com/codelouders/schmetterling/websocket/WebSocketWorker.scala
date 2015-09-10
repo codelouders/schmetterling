@@ -21,8 +21,8 @@ import spray.http.{StatusCodes, HttpResponse, HttpRequest}
 import spray.routing.HttpServiceActor
 
 import com.codelouders.schmetterling.events._
-import com.codelouders.schmetterling.example.auth.oauth2.{OauthRequestParser, OauthAuthorization}
-import com.codelouders.schmetterling.example.auth.oauth2.session.{GetSession, Session, SessionService}
+import com.codelouders.schmetterling.auth.oauth2.{OauthRequestParser, OauthAuthorization}
+import com.codelouders.schmetterling.auth.oauth2.session.{GetSession, Session, SessionService}
 import com.codelouders.schmetterling.logger.Logging
 import com.codelouders.schmetterling.rest.auth.{RestApiUser, NoAuthorisation, Authorization}
 import com.codelouders.schmetterling.util.JsonUtil

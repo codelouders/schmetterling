@@ -4,13 +4,13 @@
  * Created on 2015-04-29
  * Project: ${PROJECT_NAME}
  */
-package com.codelouders.schmetterling.example.auth.oauth2.session
+package com.codelouders.schmetterling.auth.oauth2.session
 
 import akka.actor.Status.Failure
 import akka.actor.{Actor, ActorRef, Props}
 
-import com.codelouders.schmetterling.example.auth.oauth2.{Token, OauthUser}
-import com.codelouders.schmetterling.example.auth.oauth2.provider.AuthorizationProvider
+import com.codelouders.schmetterling.auth.oauth2.{Token, OauthUser}
+import com.codelouders.schmetterling.auth.oauth2.provider.AuthorizationProvider
 import com.codelouders.schmetterling.util.CryptoUtil
 
 

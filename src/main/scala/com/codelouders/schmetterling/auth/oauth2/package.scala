@@ -3,7 +3,7 @@
  *
  * Created on 2015-05-11.
  */
-package com.codelouders.schmetterling.example.auth
+package com.codelouders.schmetterling.auth
 
 import spray.json.DefaultJsonProtocol._
 

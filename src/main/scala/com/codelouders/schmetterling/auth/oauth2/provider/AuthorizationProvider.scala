@@ -1,6 +1,6 @@
-package com.codelouders.schmetterling.example.auth.oauth2.provider
+package com.codelouders.schmetterling.auth.oauth2.provider
 
-import com.codelouders.schmetterling.example.auth.oauth2.OauthUser
+import com.codelouders.schmetterling.auth.oauth2.OauthUser
 
 
 /**
