@@ -6,10 +6,11 @@
 package com.codelouders.schmetterling.example.api.company
 
 import akka.actor.{Props, Actor}
+import com.codelouders.schmetterling.events.notification.{DeleteEntityNotification, EntityChangedNotifications}
 
 import spray.routing.RequestContext
 
-import com.codelouders.schmetterling.events.{DeleteEntityNotification, EntityChangedNotifications, SchmetteringEventBus}
+import com.codelouders.schmetterling.events.SchmetteringEventBus
 import com.codelouders.schmetterling.logger.Logging
 import com.codelouders.schmetterling.rest.EntityNotFound
 import com.codelouders.schmetterling.rest.auth.RestApiUser

@@ -6,12 +6,13 @@
 package com.codelouders.schmetterling.example.api.person
 
 import akka.actor.{Props, Actor}
+import com.codelouders.schmetterling.events.notification.EntityChangedNotifications
 
 import spray.routing.RequestContext
 import spray.httpx.SprayJsonSupport._
 import spray.json.DefaultJsonProtocol._
 
-import com.codelouders.schmetterling.events.{EntityChangedNotifications, SchmetteringEventBus}
+import com.codelouders.schmetterling.events.SchmetteringEventBus
 import com.codelouders.schmetterling.logger.Logging
 
 

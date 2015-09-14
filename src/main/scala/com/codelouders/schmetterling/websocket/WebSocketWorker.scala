@@ -6,6 +6,9 @@
 
 package com.codelouders.schmetterling.websocket
 
+import com.codelouders.schmetterling.events.notification.{PubSubEntityChangeMessage, EntityChanged}
+import com.codelouders.schmetterling.websocket.notification.NotifyUserMessage
+
 import scala.concurrent.Await
 
 import java.util.concurrent.TimeUnit

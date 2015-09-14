@@ -3,12 +3,11 @@
  *
  * Created on 2015-09-02
  */
-package com.codelouders.schmetterling.events
+package com.codelouders.schmetterling.events.notification
 
 import akka.actor.ActorContext
-
+import com.codelouders.schmetterling.events.Notifications
 import com.codelouders.schmetterling.rest.auth.RestApiUser
-import com.codelouders.schmetterling.util.JsonUtil
 
 /**
  * Allows to send push messages via websocket
@@ -24,17 +23,6 @@ trait EntityChangedNotifications extends Notifications {
     publish(EntityChanged, messageToPush)
   }
 
-  /**
-   * Pushes message to specific user
-   *
-   * @param user - user to which message should be pushed
-   *
-   * @param messageToPush - message to be pushed
-   * @param context - akka actor context
-   */
-  def publishToUser(user: RestApiUser, messageToPush: NotifyUserMessage)(implicit context: ActorContext, restApiUser: RestApiUser) {
-    publish(EntityChanged, messageToPush)
-  }
 }
 
 
