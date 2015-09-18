@@ -7,7 +7,7 @@
     <groupId>com.codelouders</groupId>
     <artifactId>schmetterling_2.11</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>schmetterling</name>
     <description>A library, which help build quickly REST API</description>
     <organization>
