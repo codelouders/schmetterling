@@ -5,6 +5,7 @@
  */
 package com.codelouders.schmetterling.rest
 
+import scala.concurrent.Await
 import scala.concurrent.duration._
 
 import akka.actor.{ActorSystem, PoisonPill}
@@ -33,7 +34,7 @@ import com.codelouders.schmetterling.websocket.WebSocketServer
  * @param authorization - authorisation method - default: NoAuthorisation
  */
 class Rest(actorSystem: ActorSystem, listOfResourceApiBuilders: List[BaseResourceBuilder], loggers: List[Logger],
-           authorization: Authorization = NoAuthorisation, postInit: () => Any = {() => Unit}) {
+           authorization: Authorization = NoAuthorisation, postInit: () => Unit = {() => Unit}) {
 
 
   // we need an ActorSystem to host our application in
@@ -92,7 +93,7 @@ class Rest(actorSystem: ActorSystem, listOfResourceApiBuilders: List[BaseResourc
 
   def stop(): Unit = {
     println("Shouting down...")
-    system.shutdown()
-    system.awaitTermination()
+    val terminated =  system.terminate()
+    Await.result(terminated, Duration.Inf)
   }
 }

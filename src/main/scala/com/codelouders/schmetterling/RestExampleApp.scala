@@ -17,6 +17,8 @@ import com.codelouders.schmetterling.logger.{DebugLevel, ErrorLevel, FileLogger,
 import com.codelouders.schmetterling.rest.Rest
 import com.codelouders.schmetterling.util.CryptoUtil
 
+import scala.concurrent.Future
+
 
 // Without authorization
 object RestExampleApp extends App {
@@ -32,16 +34,14 @@ object RestWithOauthExampleApp extends App with DatabaseAccess {
 
   val initFunction = {
     () => {
-      Thread.sleep(1000)
       connectionPool withSession {
         implicit session =>
           val userDao = new OauthUserDao()
           userDao.getById(1) match {
             case None =>
-              userDao.create(new OauthUser(Some(1), "admin", CryptoUtil.sha1("Nintendo64".map {
-                _.toByte
-              }.toArray)))
+              userDao.create(new OauthUser(Some(1), "admin", CryptoUtil.sha1("Nintendo64".map {_.toByte}.toArray)))
             case Some(_) =>
+
           }
       }
       ()

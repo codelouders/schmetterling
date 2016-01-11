@@ -7,7 +7,7 @@
     <groupId>com.codelouders</groupId>
     <artifactId>schmetterling_2.11</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.1</version>
+    <version>1.0.2-SNAPSHOT</version>
     <name>schmetterling</name>
     <description>A library, which help build quickly REST API</description>
     <organization>
@@ -40,10 +40,10 @@
 
 
     <properties>
-        <scala.maven.plugin.version>3.2.0</scala.maven.plugin.version>
+        <scala.maven.plugin.version>3.2.1</scala.maven.plugin.version>
         <scala.version.major>2.11</scala.version.major>
-        <scala.version>${scala.version.major}.5</scala.version>
-        <akka.version>2.3.7</akka.version>
+        <scala.version>${scala.version.major}.7</scala.version>
+        <akka.version>2.4.1</akka.version>
         <jackson.version>2.5.1</jackson.version>
         <mysql.version>5.1.34</mysql.version>
         <slick.version>2.1.0</slick.version>
@@ -54,17 +54,17 @@
         <typesafe.config.version>1.2.1</typesafe.config.version>
         <websocket.version>0.1.4</websocket.version>
         <mockito.version>1.10.19</mockito.version>
-        <surefire.plugin.version>2.18.1</surefire.plugin.version>
+        <surefire.plugin.version>2.19</surefire.plugin.version>
         <junit.version>4.11</junit.version>
         <oauth.version>0.13.3</oauth.version>
     </properties>
 
     <repositories>
-        <repository>
-            <id>scala-tools.org</id>
-            <name>Scala-Tools Maven2 Repository</name>
-            <url>http://repo.typesafe.com/typesafe/releases/</url>
-        </repository>
+    <repository>
+        <id>scala-tools.org</id>
+        <name>Scala-Tools Maven2 Repository</name>
+        <url>http://repo.typesafe.com/typesafe/releases/</url>
+    </repository>
         <repository>
             <id>oss.sonatype.org</id>
             <name>releases</name>
@@ -197,11 +197,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.foursquare.lint</groupId>
-            <artifactId>linter_${scala.version.major}</artifactId>
-            <version>0.1.9</version>
-        </dependency>
     </dependencies>
 
     <distributionManagement>
@@ -279,6 +274,16 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
             </plugin>
 
             <plugin>
