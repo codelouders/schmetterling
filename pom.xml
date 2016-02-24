@@ -48,7 +48,7 @@
         <mysql.version>5.1.34</mysql.version>
         <slick.version>2.1.0</slick.version>
         <spray.version>1.3.3</spray.version>
-        <spray.json.version>1.3.1</spray.json.version>
+        <spray.json.version>1.3.2</spray.json.version>
         <c3p0.version>0.9.1.2</c3p0.version>
         <scalatest.verion>2.2.1</scalatest.verion>
         <typesafe.config.version>1.2.1</typesafe.config.version>
@@ -318,7 +318,7 @@
                     <outputDirectory>${project.build.directory}</outputDirectory>
                 </configuration>
             </plugin>
-            <plugin>
+            <!-- plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>1.5</version>
@@ -331,7 +331,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin -->
         </plugins>
     </build>
 

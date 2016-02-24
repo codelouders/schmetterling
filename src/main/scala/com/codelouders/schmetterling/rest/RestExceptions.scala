@@ -12,8 +12,12 @@ import spray.http.StatusCodes
  * Base REST exceptions
  */
 
-class RestException(val code: StatusCodes.ClientError, val msg: String) extends Exception(msg)
+class RestException(val code: spray.http.StatusCode, val msg: String) extends Exception(msg)
 
 case class EntityNotFound(override val msg: String) extends RestException(StatusCodes.NotFound, msg)
 
 case class UpdateException(override val msg: String) extends RestException(StatusCodes.BadRequest, msg)
+
+case class ServerException(override val msg: String) extends RestException(StatusCodes.InternalServerError, msg)
+
+case class RestrictedAccessException(override val msg: String) extends RestException(StatusCodes.Unauthorized, msg)

@@ -6,7 +6,7 @@ package com.codelouders.schmetterling.rest.auth
  *
  * Created on 18/08/2015
  */
-trait RestApiUser{
+trait RestApiUser {
   val id: Option[Int]
 }
 
